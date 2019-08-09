@@ -48,14 +48,42 @@ namespace WebApplication1.Controllers
         }
 
         [Route("")]
-        public IEnumerable<Post> Post([FromBody] Post newPost)
+        public int Post([FromBody] Post newPost)
         {
             List<Post> posts = this.posts.ToList<Post>();
             newPost.Id = posts.Count + 1;
             posts.Add(newPost);
             this.posts = posts;
 
-            return this.posts;
+            return newPost.Id;
+
+        }
+
+        [Route("")]
+        public IHttpActionResult Put([FromBody] Post updatePost)
+        {
+            Post post = posts.FirstOrDefault<Post>(p => p.Id.Equals(updatePost.Id));
+
+            if (post == null)
+                return NotFound();
+
+            post.Title = updatePost.Title;
+
+            return Ok(post);
+
+        }
+
+        [Route("")]
+        public IHttpActionResult Delete(int id)
+        {
+            Post post = posts.FirstOrDefault<Post>(p => p.Id.Equals(id));
+
+            if (post == null)
+                return NotFound();
+
+            posts.RemoveAt(posts.IndexOf(post));
+
+            return Ok(posts);
 
         }
 
